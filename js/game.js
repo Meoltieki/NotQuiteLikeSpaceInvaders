@@ -113,12 +113,14 @@ function updatePlayer(dt, $container){
 function createLaser ($container, x, y){
 
     const $element = document.createElement("img");
-        $element.src = "img/fire.png";
+        $element.src = "img/laserBlue01.png";
         $element.className = "laser";
         $container.appendChild($element);
         const laser = {x, y, $element};
         GAME_STATE.lasers.push(laser);
         setPosition($element, x, y);
+        const audio = new Audio ("sound/sfx_laser1.ogg");
+        audio.play();
 }
 
 function update() {
