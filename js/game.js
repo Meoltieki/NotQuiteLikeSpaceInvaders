@@ -11,6 +11,7 @@ const PLAYER_WIDTH = 20;
 const PLAYER_HEIGHT = 5;
 const PLAYER_MAX_SPEED = 600;
 
+
 const GAME_STATE = {
 
     lastTime: Date.now(),
@@ -22,6 +23,8 @@ const GAME_STATE = {
 
     playerX: 0,
     playerY: 0,
+    enemyX: 0,
+    enemyY: 0,
     lasers: [],
 
 }
@@ -43,6 +46,15 @@ function clamp(v, min, max){
 
 }
 
+function createEnemy($container){
+    GAME_STATE.enemyX  = GAME_WIDTH /2;
+    GAME_STATE.enemyY = GAME_HEIGHT -50;
+    const $enemy = document.createElement("img");
+    $enemy.src = "img/nasty.jpg";
+    $enemy.className = "enemy";
+    $container.appendChild($enemy);
+    setPosition($enemy, GAME_STATE.enemyX, GAME_STATE.enemyY);
+}
 
 function createPlayer($container) {
 
