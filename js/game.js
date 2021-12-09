@@ -8,9 +8,12 @@ const KEY_CODE_DOWN = 40;
 const GAME_WIDTH = 800;
 const GAME_HEIGHT = 600;
 const PLAYER_WIDTH = 20;
+const PLAYER_HEIGHT = 5;
+const PLAYER_MAX_SPEED = 600;
 
 const GAME_STATE = {
 
+    lastTime: Date.now(),
     leftPressed: false,
     rightPressed: false,
     upPressed: false,
@@ -19,6 +22,7 @@ const GAME_STATE = {
 
     playerX: 0,
     playerY: 0,
+    lasers: [],
 
 }
 function setPosition($el, x, y){
@@ -31,7 +35,7 @@ function clamp(v, min, max){
 
     if (v<min){
         return min;
-    } else if (v<max){
+    } else if (v>max){
         return max;
     }else {
         return v;
@@ -57,12 +61,12 @@ function init() {
     createPlayer($container);
 }
 
-function updatePlayer(){
+function updatePlayer(dt, $container){
     if (GAME_STATE.leftPressed){
-        GAME_STATE.playerX -= 5;
+        GAME_STATE.playerX -= dt * PLAYER_MAX_SPEED;
     }
     if (GAME_STATE.rightPressed){
-        GAME_STATE.playerX += 5;
+        GAME_STATE.playerX += dt * PLAYER_MAX_SPEED;
     }
     if (GAME_STATE.leftPressed){
         GAME_STATE.playerX -= 5;
@@ -76,14 +80,44 @@ function updatePlayer(){
     if (GAME_STATE.downPressed){
         GAME_STATE.playerY += 5;
     }
-    GAME_STATE.playerX = clamp(GAME_STATE.playerX, PLAYER_WIDTH, GAME_WIDTH - PLAYER_WIDTH);
+    GAME_STATE.playerX = clamp(
+    GAME_STATE.playerX,
+    PLAYER_WIDTH, 
+    GAME_WIDTH - PLAYER_WIDTH);
+
+    GAME_STATE.playerY = clamp(
+        GAME_STATE.playerY,
+        PLAYER_HEIGHT, 
+        GAME_HEIGHT - PLAYER_HEIGHT);
+
+    if ( GAME_STATE.spacePressed){
+        createLaser($container, GAME_STATE.playerX, GAME_STATE.playerY); 
+    }
+
     const $player = document.querySelector(".player");
     setPosition($player, GAME_STATE.playerX, GAME_STATE.playerY);
 }
 
-function update() {
+function createLaser ($container, x, y){
 
-    updatePlayer();
+    const $element = document.createElement("img");
+        $element.src = "img/fire.png";
+        $element.className = "laser";
+        $container.appendChild($element);
+        const laser = {x, y, $element};
+        GAME_STATE.lasers.push(laser);
+        setPosition($element, x, y);
+}
+
+function update() {
+    const currentTime = Date.now();
+    const dt = (currentTime - GAME_STATE.lastTime) / 1000;
+
+    const $container = document.querySelector(".game"); 
+    updatePlayer(dt, $container);
+
+    GAME_STATE.lastTime = currentTime;
+
     window.requestAnimationFrame(update);
 }
 
