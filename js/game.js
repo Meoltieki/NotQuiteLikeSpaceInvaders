@@ -37,11 +37,23 @@ const GAME_STATE = {
     enemies: [],
 
 }
+
+function rectsIntersect(r1, r2) {
+    return !(
+        r2.left > r1.right ||
+        r2.right < r1.left ||
+        r2.top > r1.bottom ||
+        r2.bottom < r1.top
+    );
+}
+
+
 function setPosition($el, x, y){
 
     $el.style.transform = `translate(${x}px, ${y}px)`;
 
 }
+
 
 function clamp(v, min, max){
 
@@ -175,6 +187,18 @@ function createEnemy ($container, x, y){
     setPosition($element, x, y);
 }
 
+function eupdateEnemies(dt, $container){
+    const dx = Math.sin(GAME_STATE.lastTime / 1000.0) * 50;
+    const dy = Math.sin (GAME_STATE.lastTime / 1000.0) * 10;
+
+    const enemies = GAME_STATE.enemies;
+    for (let i = 0; i < enemies.lenght; i++) {
+        const enemy = enemies[i];
+        const x = enemy.x + dx;
+        const y = enemy.y + dy;
+        setPosition(enemy.$element, x, y);
+    }
+}
 
 
 function update() {
@@ -184,6 +208,7 @@ function update() {
     const $container = document.querySelector(".game"); 
     updatePlayer(dt, $container);
     updateLasers(dt, $container);
+    updateEnemies(dt, $container);
 
     GAME_STATE.lastTime = currentTime;
 
